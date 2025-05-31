@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Week Calendar</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .title {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 100px);
+      grid-template-rows: repeat(4, 100px);
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .month {
+      position: relative;
+      background-color: #3b82f6;
+      border: 2px solid #3b82f6;
+      width: 100px;
+      height: 100px;
+      overflow: hidden;
+    }
+
+    .month.past {
+      background-color: #000;
+      border: 2px solid #3b82f6;
+    }
+
+    .countdown-container {
+      margin-top: 20px;
+    }
+
+    .countdown-box {
+      background-color: #000;
+      padding: 20px 30px;
+      border-radius: 15px;
+      display: inline-flex;
+      gap: 10px;
+      box-shadow: 0 0 25px #00ffe7;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Courier New', monospace;
+      color: #00ffcc;
+      font-size: 1.2em;
+      min-width: 60px;
+    }
+
+    .countdown-label {
+      font-size: 0.8em;
+      color: #ccc;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title" id="mainTitle">Life Left in ...</h1>
+  <div class="month-grid" id="monthGrid"></div>
+
+  <div class="countdown-container">
+    <h2 id="subTitle">Time Left Until End of ...</h2>
+    <div class="countdown-box">
+      <div class="countdown-item">
+        <span id="months">00</span>
+        <span class="countdown-label">Months</span>
+      </div>
+      <div class="countdown-item">
+        <span id="days">00</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-item">
+        <span id="hours">00</span>
+        <span class="countdown-label">hr</span>
+      </div>
+      <div class="countdown-item">
+        <span id="minutes">00</span>
+        <span class="countdown-label">min</span>
+      </div>
+      <div class="countdown-item">
+        <span id="seconds">00</span>
+        <span class="countdown-label">sec</span>
+      </div>
+      <div class="countdown-item">
+        <span id="milliseconds">000</span>
+        <span class="countdown-label">ms</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const currentYear = new Date().getFullYear();
+    const endDate = new Date(`${currentYear}-12-31T23:59:59.999`);
+
+    document.getElementById("mainTitle").textContent = `Life Left in ${currentYear}...`;
+    document.getElementById("subTitle").textContent = `Time Left Until End of ${currentYear}`;
+
+    const monthGrid = document.getElementById("monthGrid");
+    const totalBoxes = 48;
+    const boxes = [];
+
+    function createBoxes() {
+      monthGrid.innerHTML = "";
+      for (let i = 0; i < totalBoxes; i++) {
+        const box = document.createElement("div");
+        box.className = "month";
+        monthGrid.appendChild(box);
+        boxes.push(box);
+      }
+    }
+
+    function getWeekIndex(date) {
+      const startOfYear = new Date(date.getFullYear(), 0, 1);
+      const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
+      const totalMs = endOfYear - startOfYear;
+      const elapsedMs = date - startOfYear;
+      return Math.floor((elapsedMs / totalMs) * totalBoxes);
+    }
+
+    function updateBoxes() {
+      const now = new Date();
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+      const totalMs = endOfYear - startOfYear;
+      const currentWeek = getWeekIndex(now);
+
+      for (let i = 0; i < totalBoxes; i++) {
+        const box = boxes[i];
+        box.className = "month";
+        while (box.firstChild) box.removeChild(box.firstChild);
+
+        if (i < currentWeek) {
+          box.classList.add("past");
+        } else if (i === currentWeek) {
+          const boxStart = startOfYear.getTime() + (i / totalBoxes) * totalMs;
+          const boxEnd = startOfYear.getTime() + ((i + 1) / totalBoxes) * totalMs;
+          const percentPassed = Math.min(100, ((now - boxStart) / (boxEnd - boxStart)) * 100);
+
+          const left = document.createElement("div");
+          left.style.position = "absolute";
+          left.style.top = "0";
+          left.style.left = "0";
+          left.style.height = "100%";
+          left.style.width = `${percentPassed}%`;
+          left.style.backgroundColor = "#000";
+          left.style.zIndex = "2";
+
+          const right = document.createElement("div");
+          right.style.position = "absolute";
+          right.style.top = "0";
+          right.style.left = `${percentPassed}%`;
+          right.style.height = "100%";
+          right.style.width = `${100 - percentPassed}%`;
+          right.style.backgroundColor = "#3b82f6";
+          right.style.zIndex = "2";
+
+          box.appendChild(left);
+          box.appendChild(right);
+        }
+      }
+    }
+
+    const monthsSpan = document.getElementById("months");
+    const daysSpan = document.getElementById("days");
+    const hoursSpan = document.getElementById("hours");
+    const minutesSpan = document.getElementById("minutes");
+    const secondsSpan = document.getElementById("seconds");
+    const millisecondsSpan = document.getElementById("milliseconds");
+
+    function updateCountdown() {
+      const now = new Date();
+      const future = new Date(endDate);
+
+      let months = (future.getFullYear() - now.getFullYear()) * 12 + (future.getMonth() - now.getMonth());
+      const tempFuture = new Date(now.getFullYear(), now.getMonth() + months, now.getDate());
+      if (tempFuture > future) {
+        months--;
+      }
+
+      const adjustedFuture = new Date(now.getFullYear(), now.getMonth() + months, now.getDate());
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const days = Math.floor((future - adjustedFuture) / msPerDay);
+
+      const hours = 23 - now.getHours();
+      const minutes = 59 - now.getMinutes();
+      const seconds = 59 - now.getSeconds();
+      const milliseconds = 999 - now.getMilliseconds();
+
+      monthsSpan.textContent = String(months).padStart(2, "0");
+      daysSpan.textContent = String(days).padStart(2, "0");
+      hoursSpan.textContent = String(hours).padStart(2, "0");
+      minutesSpan.textContent = String(minutes).padStart(2, "0");
+      secondsSpan.textContent = String(seconds).padStart(2, "0");
+      millisecondsSpan.textContent = String(milliseconds).padStart(3, "0");
+    }
+
+    function animate() {
+      updateCountdown();
+      updateBoxes();
+      requestAnimationFrame(animate);
+    }
+
+    createBoxes();
+    animate();
+  </script>
+</body>
+</html>
