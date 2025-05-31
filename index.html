@@ -74,7 +74,7 @@
   </style>
 </head>
 <body>
-  <h1 class="title" id="mainTitle">Life Left in ...</h1>
+  <h1 class="title" id="mainTitle">Life Left in 2025...</h1>
   <div class="month-grid" id="monthGrid"></div>
 
   <div class="countdown-container">
@@ -111,8 +111,8 @@
     const currentYear = new Date().getFullYear();
     const endDate = new Date(`${currentYear}-12-31T23:59:59.999`);
 
-    document.getElementById("mainTitle").textContent = `Life Left in ${currentYear}...`;
-    document.getElementById("subTitle").textContent = `Time Left Until End of ${currentYear}`;
+    document.getElementById("mainTitle").textContent = ` Time Remaining ⌛. .`;
+    document.getElementById("subTitle").textContent = `${currentYear} Ends In :`;
 
     const monthGrid = document.getElementById("monthGrid");
     const totalBoxes = 48;
