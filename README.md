@@ -1,21 +1,35 @@
 # 🗓️ Dynamic Year Countdown Calendar
 
-A **48-box weekly grid** and **real-time countdown timer** that automatically tracks your remaining time in the current year — week by week, millisecond by millisecond.
+This project visually represents the **progress of the current year (2025)** through a grid of boxes (48 total), each indicating a fraction of the year (approximately a week). It also includes a **real-time countdown timer** to the end of the year along with a **live date-time display**.
 
 ---
 
-## ✨ Features
+## 🌟 Features
 
-- 📅 **Auto-updates** to the current year  
-- 📦 **48-box layout** to visually map the year into manageable chunks  
-- ⏱ **Live countdown**: months, days, hours, minutes, seconds, milliseconds  
-- 🕰 **Live clock** displayed in the top-right corner  
-- 🌙 **Dark theme** for a clean, modern aesthetic  
-- 🛠 Built with **pure HTML, CSS, and JavaScript** — no external libraries  
+- ✅ **48 Box Grid** representing the year
+  - Boxes turn black for past weeks
+  - Current box shows partial fill indicating progress through the current week
+- 🕒 **Countdown Timer** to the end of the year
+  - Months, Days, Hours, Minutes, Seconds, Milliseconds
+- 📆 **Live Date-Time Display**
+  - Neatly displayed at the top-right corner
+- 🎨 **Dark UI Theme** with glowing timer box
 
 ---
 
-## 📁 Project Structure
-dynamic-year-calendar/
-├── index.html # Main web app
-└── README.md # Project overview
+## 📸 Preview:
+
+![screenshot](image.png) <!-- Replace this with your actual screenshot if available -->
+
+---
+
+## 🔗 Live Demo
+
+👉 [Click here to view the calendar live][(https://dynamic-year-calendar-git-main-priyatosh-deys-projects.vercel.app)](https://dynamic-year-calendar-git-main-priyatosh-deys-projects.vercel.app)
+
+## 📁 File Structure
+
+```plaintext
+.
+├── index.html   # The main file with HTML, CSS, and JS
+└── README.md    # Project documentation
