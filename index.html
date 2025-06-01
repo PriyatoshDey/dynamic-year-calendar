@@ -115,21 +115,6 @@
     const totalBoxes = 48;
     const boxes = [];
 
-    const monthNames = [
-      "Jan", "Jan", "Jan", "Jan",
-      "Feb", "Feb", "Feb", "Feb",
-      "Mar", "Mar", "Mar", "Mar",
-      "Apr", "Apr", "Apr", "Apr",
-      "May", "May", "May", "May",
-      "Jun", "Jun", "Jun", "Jun",
-      "Jul", "Jul", "Jul", "Jul",
-      "Aug", "Aug", "Aug", "Aug",
-      "Sep", "Sep", "Sep", "Sep",
-      "Oct", "Oct", "Oct", "Oct",
-      "Nov", "Nov", "Nov", "Nov",
-      "Dec", "Dec", "Dec", "Dec"
-    ];
-
     function isLeapYear(year) {
       return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
     }
@@ -155,14 +140,6 @@
       for (let i = 0; i < totalBoxes; i++) {
         const box = document.createElement("div");
         box.className = "month";
-        const label = document.createElement("div");
-        label.textContent = monthNames[i];
-        label.style.position = "absolute";
-        label.style.bottom = "5px";
-        label.style.right = "5px";
-        label.style.fontSize = "0.7em";
-        label.style.color = "#fff";
-        box.appendChild(label);
         monthGrid.appendChild(box);
         boxes.push(box);
       }
@@ -175,7 +152,7 @@
       for (let i = 0; i < totalBoxes; i++) {
         const box = boxes[i];
         box.className = "month";
-        while (box.children.length > 1) box.removeChild(box.firstChild); // keep label
+        while (box.children.length > 0) box.removeChild(box.firstChild);
 
         if (i < currentBox) {
           box.classList.add("past");
