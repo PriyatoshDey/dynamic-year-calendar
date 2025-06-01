@@ -90,36 +90,18 @@
 <body>
   <div id="dateTime" class="date-time"></div>
 
-  <h1 class="title" id="mainTitle">Life Left in 2025...</h1>
+  <h1 class="title" id="mainTitle">Time Remaining ⌛. .</h1>
   <div class="month-grid" id="monthGrid"></div>
 
   <div class="countdown-container">
     <h2 id="subTitle">Time Left Until End of ...</h2>
     <div class="countdown-box">
-      <div class="countdown-item">
-        <span id="months">00</span>
-        <span class="countdown-label">Months</span>
-      </div>
-      <div class="countdown-item">
-        <span id="days">00</span>
-        <span class="countdown-label">Days</span>
-      </div>
-      <div class="countdown-item">
-        <span id="hours">00</span>
-        <span class="countdown-label">hr</span>
-      </div>
-      <div class="countdown-item">
-        <span id="minutes">00</span>
-        <span class="countdown-label">min</span>
-      </div>
-      <div class="countdown-item">
-        <span id="seconds">00</span>
-        <span class="countdown-label">sec</span>
-      </div>
-      <div class="countdown-item">
-        <span id="milliseconds">000</span>
-        <span class="countdown-label">ms</span>
-      </div>
+      <div class="countdown-item"><span id="months">00</span><span class="countdown-label">Months</span></div>
+      <div class="countdown-item"><span id="days">00</span><span class="countdown-label">Days</span></div>
+      <div class="countdown-item"><span id="hours">00</span><span class="countdown-label">hr</span></div>
+      <div class="countdown-item"><span id="minutes">00</span><span class="countdown-label">min</span></div>
+      <div class="countdown-item"><span id="seconds">00</span><span class="countdown-label">sec</span></div>
+      <div class="countdown-item"><span id="milliseconds">000</span><span class="countdown-label">ms</span></div>
     </div>
   </div>
 
@@ -127,12 +109,45 @@
     const currentYear = new Date().getFullYear();
     const endDate = new Date(`${currentYear}-12-31T23:59:59.999`);
 
-    document.getElementById("mainTitle").textContent = ` Time Remaining ⌛. .`;
     document.getElementById("subTitle").textContent = `${currentYear} Ends In :`;
 
     const monthGrid = document.getElementById("monthGrid");
     const totalBoxes = 48;
     const boxes = [];
+
+    const monthNames = [
+      "Jan", "Jan", "Jan", "Jan",
+      "Feb", "Feb", "Feb", "Feb",
+      "Mar", "Mar", "Mar", "Mar",
+      "Apr", "Apr", "Apr", "Apr",
+      "May", "May", "May", "May",
+      "Jun", "Jun", "Jun", "Jun",
+      "Jul", "Jul", "Jul", "Jul",
+      "Aug", "Aug", "Aug", "Aug",
+      "Sep", "Sep", "Sep", "Sep",
+      "Oct", "Oct", "Oct", "Oct",
+      "Nov", "Nov", "Nov", "Nov",
+      "Dec", "Dec", "Dec", "Dec"
+    ];
+
+    function isLeapYear(year) {
+      return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    }
+
+    function getDayOfYear(date) {
+      const start = new Date(date.getFullYear(), 0, 0);
+      const diff = date - start;
+      const oneDay = 1000 * 60 * 60 * 24;
+      return Math.floor(diff / oneDay);
+    }
+
+    function getCurrentWeekBox() {
+      const now = new Date();
+      const yearDays = isLeapYear(now.getFullYear()) ? 366 : 365;
+      const daysPerBox = yearDays / 48;
+      const dayOfYear = getDayOfYear(now);
+      return Math.min(47, Math.floor(dayOfYear / daysPerBox)); // 0-indexed
+    }
 
     function createBoxes() {
       monthGrid.innerHTML = "";
@@ -140,39 +155,38 @@
       for (let i = 0; i < totalBoxes; i++) {
         const box = document.createElement("div");
         box.className = "month";
+        const label = document.createElement("div");
+        label.textContent = monthNames[i];
+        label.style.position = "absolute";
+        label.style.bottom = "5px";
+        label.style.right = "5px";
+        label.style.fontSize = "0.7em";
+        label.style.color = "#fff";
+        box.appendChild(label);
         monthGrid.appendChild(box);
         boxes.push(box);
       }
     }
 
-    function getWeekNumber(d) {
-      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      const startOfYear = new Date(Date.UTC(d.getFullYear(), 0, 1));
-      const dayOfYear = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24));
-      return Math.floor(dayOfYear / 7) + 1; // +1 so Jan 1–7 is week 1
-    }
-
     function updateBoxes() {
       const now = new Date();
-      const currentWeek = getWeekNumber(now);
-      const maxWeek = totalBoxes;
+      const currentBox = getCurrentWeekBox();
 
       for (let i = 0; i < totalBoxes; i++) {
         const box = boxes[i];
         box.className = "month";
-        while (box.firstChild) box.removeChild(box.firstChild);
+        while (box.children.length > 1) box.removeChild(box.firstChild); // keep label
 
-        if (i < currentWeek - 1) {
+        if (i < currentBox) {
           box.classList.add("past");
-        } else if (i === currentWeek - 1) {
-          // Highlight current week with partial fill
-          const dayOfWeek = now.getDay(); // 0 (Sun) to 6 (Sat)
+        } else if (i === currentBox) {
+          const day = now.getDay();
           const hour = now.getHours();
           const minute = now.getMinutes();
           const second = now.getSeconds();
           const ms = now.getMilliseconds();
 
-          const percentPassed = ((dayOfWeek * 24 * 60 * 60 * 1000 + hour * 3600000 + minute * 60000 + second * 1000 + ms) / (7 * 24 * 60 * 60 * 1000)) * 100;
+          const percentPassed = ((day * 24 * 60 * 60 * 1000 + hour * 3600000 + minute * 60000 + second * 1000 + ms) / (7 * 24 * 60 * 60 * 1000)) * 100;
 
           const left = document.createElement("div");
           left.style.position = "absolute";
@@ -238,9 +252,6 @@
       requestAnimationFrame(animate);
     }
 
-    createBoxes();
-    animate();
-
     function updateDateTimeDisplay() {
       const now = new Date();
       const options = {
@@ -258,6 +269,9 @@
 
     setInterval(updateDateTimeDisplay, 1000);
     updateDateTimeDisplay();
+
+    createBoxes();
+    animate();
   </script>
 </body>
 </html>
